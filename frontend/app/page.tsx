@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
@@ -19,7 +21,8 @@ export default function Home() {
       if (response.status === 201) {
         router.push(`/chatroom?room_id=${data.room_id}`);
       } else {
-        setError("Failed to create chat room. Try again!");
+        //setError("Failed to create chat room. Try again!");
+        toast.error("Failed to create chat room. Try again!")
       }
     } catch {
       setError("An error occurred.");
@@ -30,6 +33,7 @@ export default function Home() {
     <div className="flex flex-col min-h-screen">
       <Header />
       <main className="flex-1 flex flex-col items-center justify-center">
+        <div><Toaster/></div>
         {/* Show error if present */}
         {error && (
           <div className="mb-4 px-4 py-2 bg-red-600 text-white rounded">

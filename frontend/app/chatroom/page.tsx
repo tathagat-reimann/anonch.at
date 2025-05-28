@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from 'next/navigation'
+import { toast } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
@@ -33,7 +35,7 @@ export default function ChatRoom() {
             const ws = new WebSocket(`${API_BASE_URL}/api/rooms/${room_id}/join`);
             ws.onmessage = (event: MessageEvent) => {
                 const data: Message = JSON.parse(event.data);
-                console.log("Received message:", data);
+                // console.log("Received message:", data);
                 if (data.type == "clientName") setUsername(data.content);
                 if (data.type == "chat" || data.type == "info") setMessages((prev) => [...prev, data.sender + ": " + data.content]);
             };
@@ -43,7 +45,7 @@ export default function ChatRoom() {
 
     const sendMessage = () => {
         if (socket && inputMessage.trim() && socket.readyState === WebSocket.OPEN) {
-            console.log("Sending message:", inputMessage);
+            // console.log("Sending message:", inputMessage);
             socket.send(JSON.stringify(inputMessage));
             setInputMessage("");
         }
@@ -53,9 +55,10 @@ export default function ChatRoom() {
         <div className="flex flex-col min-h-screen">
             <Header />
             <main className="flex-1 flex flex-col items-center justify-center">
+                <div><Toaster /></div>
                 <h2 className="text-2xl font-semibold text-white-800">Welcome, {username}</h2>
                 <button
-                    onClick={() => navigator.clipboard.writeText(`/api/rooms/${room_id}/join`)}
+                    onClick={() => { navigator.clipboard.writeText(window.location.href); toast.success("Chatroom link copied to clipboard!") }}
                     className="mt-2 px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
                 >
                     Copy Chatroom Link
