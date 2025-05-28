@@ -2,38 +2,49 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useSearchParams } from 'next/navigation'
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
+const API_BASE_URL = process.env.ANONCHAT_BACKEND_API_BASE_URL || "http://localhost:8080";
+
 interface Message {
-    username?: string;
-    message?: string;
+    sender: string;
+    content: string;
+    type: string;
 }
 
 export default function ChatRoom() {
+    window.onbeforeunload = function () {
+        return "Are you sure you want to leave? You will lose your chat history.";
+    }
+
     const router = useRouter();
+    const searchParams = useSearchParams()
     const [username, setUsername] = useState<string>("Guest");
     const [messages, setMessages] = useState<string[]>([]);
     const [inputMessage, setInputMessage] = useState<string>("");
     const [socket, setSocket] = useState<WebSocket | null>(null);
 
-    const room_id = typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("room_id") : null;
+    const room_id = searchParams.get("room_id");
 
     useEffect(() => {
         if (room_id) {
-            const ws = new WebSocket(`/api/rooms/${room_id}/join`);
+            const ws = new WebSocket(`${API_BASE_URL}/api/rooms/${room_id}/join`);
             ws.onmessage = (event: MessageEvent) => {
                 const data: Message = JSON.parse(event.data);
-                if (data.username) setUsername(data.username);
-                if (data.message) setMessages((prev) => [...prev, data.message]);
+                console.log("Received message:", data);
+                if (data.type == "clientName") setUsername(data.content);
+                if (data.type == "chat" || data.type == "info") setMessages((prev) => [...prev, data.sender + ": " + data.content]);
             };
             setSocket(ws);
         }
     }, [room_id]);
 
     const sendMessage = () => {
-        if (socket && inputMessage.trim()) {
-            socket.send(JSON.stringify({ message: inputMessage }));
+        if (socket && inputMessage.trim() && socket.readyState === WebSocket.OPEN) {
+            console.log("Sending message:", inputMessage);
+            socket.send(JSON.stringify(inputMessage));
             setInputMessage("");
         }
     };
@@ -61,8 +72,13 @@ export default function ChatRoom() {
                         type="text"
                         value={inputMessage}
                         onChange={(e) => setInputMessage(e.target.value)}
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                                sendMessage();
+                            }
+                        }}
                         placeholder="Type a message"
-                        className="flex-1 p-2 border rounded-md mr-2"
+                        className="flex-1 p-2 border rounded-md mr-2 text-gray-700"
                     />
                     <button onClick={sendMessage} className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
                         Send
