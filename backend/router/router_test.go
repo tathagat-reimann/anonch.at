@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/gorilla/websocket"
+	"github.com/tathagat/anonch.at/conf"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/stretchr/testify/assert"
@@ -37,15 +38,18 @@ func TestSetupRouter(t *testing.T) {
 	t.Run("TestCheckRoom", func(t *testing.T) {
 		// Create a room first to ensure it exists
 		roomID := createRoomAndGetId(r)
-		req := httptest.NewRequest(http.MethodGet, "/api/rooms/"+roomID, nil)
+		req := httptest.NewRequest(http.MethodGet, "/api/rooms/"+roomID+"/check", nil)
 		rec := httptest.NewRecorder()
 
 		r.ServeHTTP(rec, req)
 
-		assert.Equal(t, http.StatusOK, rec.Code, "Expected status OK for /api/rooms/{id}")
+		assert.Equal(t, http.StatusOK, rec.Code, "Expected status OK for /api/rooms/{id}/check")
 	})
 
 	t.Run("TestJoinRoom", func(t *testing.T) {
+		// so that ws can be created in test
+		conf.AllowedFrontendOrigin = ""
+
 		// Create a room first to ensure it exists
 		roomID := createRoomAndGetId(r)
 		t.Logf("Room ID: %s", roomID)

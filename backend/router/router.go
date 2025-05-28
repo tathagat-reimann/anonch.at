@@ -27,7 +27,7 @@ var (
 func SetupRouter(r *chi.Mux) {
 	r.Route("/api", func(r chi.Router) {
 		r.Post("/rooms", CreateRoom)
-		r.Get("/rooms/{id}", CheckRoom)
+		r.Get("/rooms/{id}/check", CheckRoom)
 		r.Get("/rooms/{id}/join", JoinRoom)
 	})
 }

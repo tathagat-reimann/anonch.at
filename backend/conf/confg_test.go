@@ -34,14 +34,14 @@ func TestInit(t *testing.T) {
 	// })
 
 	t.Run("DefaultMaxRoomCapacity", func(t *testing.T) {
-		os.Unsetenv("MAX_ROOM_CAPACITY")
+		os.Unsetenv("ANONCHAT_MAX_ROOM_CAPACITY")
 		if MaxRoomCapacity != 2 {
 			t.Errorf("Expected MaxRoomCapacity to be 2, got %d", MaxRoomCapacity)
 		}
 	})
 
 	t.Run("CustomMaxRoomCapacity", func(t *testing.T) {
-		os.Setenv("MAX_ROOM_CAPACITY", "5")
+		os.Setenv("ANONCHAT_MAX_ROOM_CAPACITY", "5")
 		LoadConfig()
 		if MaxRoomCapacity != 5 {
 			t.Errorf("Expected MaxRoomCapacity to be 5, got %d", MaxRoomCapacity)
@@ -49,7 +49,7 @@ func TestInit(t *testing.T) {
 	})
 
 	t.Run("InvalidMaxRoomCapacity", func(t *testing.T) {
-		os.Setenv("MAX_ROOM_CAPACITY", "invalid")
+		os.Setenv("ANONCHAT_MAX_ROOM_CAPACITY", "invalid")
 		LoadConfig()
 		if MaxRoomCapacity != 2 {
 			t.Errorf("Expected MaxRoomCapacity to fall back to 2, got %d", MaxRoomCapacity)
@@ -57,7 +57,7 @@ func TestInit(t *testing.T) {
 	})
 
 	t.Run("RandomNamesLengthCheck", func(t *testing.T) {
-		os.Setenv("MAX_ROOM_CAPACITY", strconv.Itoa(len(RandomNames)+1))
+		os.Setenv("ANONCHAT_MAX_ROOM_CAPACITY", strconv.Itoa(len(RandomNames)+1))
 
 		if os.Getenv("BE_CRASHER") == "1" {
 			LoadConfig()
