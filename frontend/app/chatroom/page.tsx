@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from 'next/navigation'
 import { toast } from "react-hot-toast";
 import { Toaster } from "react-hot-toast";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
-const API_BASE_URL = process.env.ANONCHAT_BACKEND_API_BASE_URL || "http://localhost:8080";
+const API_BASE_URL = process.env.NEXT_PUBLIC_ANONCHAT_BACKEND_API_BASE_URL || "http://localhost:8080";
 
 interface Message {
     sender: string;
@@ -23,38 +23,56 @@ export default function ChatRoom() {
     const [socket, setSocket] = useState<WebSocket | null>(null);
     const [wsError, setWsError] = useState(false);
     const [roomCheckOK, setRoomCheckOK] = useState(false);
+    const chatboxRef = useRef<HTMLDivElement>(null);
 
     const room_id = searchParams.get("room_id");
 
     useEffect(() => {
         (async () => {
-            const response = await fetch(`${API_BASE_URL}/api/rooms/${room_id}/check`, { method: "GET" });
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/rooms/${room_id}/check`, { method: "GET" });
 
-            if (response.status === 404) {
-                toast.error("Chat room not found. Please create a new room.");
-            } else if (response.status === 403) {
-                toast.error("Chat room is full. Please create a new room.");
-            } else if (response.status === 200) {
-                setRoomCheckOK(true);
-                if (room_id) {
-                    const ws = new WebSocket(`${API_BASE_URL}/api/rooms/${room_id}/join`);
-                    ws.onmessage = (event: MessageEvent) => {
-                        const data: Message = JSON.parse(event.data);
-                        // console.log("Received message:", data);
-                        if (data.type === "clientName") setUsername(data.content);
-                        if (data.type === "chat" || data.type === "info") setMessages((prev) => [...prev, data]);
-                    };
-                    ws.onerror = (error: Event) => {
-                        console.log("WebSocket error:", error);
-                        toast.error("WebSocket error occurred. Please refresh the page to reconnect.");
-                        setSocket(null);
-                        setWsError(true);
-                        setUsername("");
-                    };
-                    setSocket(ws);
+                if (response.status === 404) {
+                    throw new Error("Chat room not found. Please create a new room.");
+                } else if (response.status === 403) {
+                    throw new Error("Chat room is full. Please create a new room by going to the homepage.");
+                } else if (response.status === 200) {
+                    setRoomCheckOK(true);
+                    if (room_id) {
+                        const ws = new WebSocket(`${API_BASE_URL}/api/rooms/${room_id}/join`);
+                        ws.onmessage = (event: MessageEvent) => {
+                            const data: Message = JSON.parse(event.data);
+                            // console.log("Received message:", data);
+                            if (data.type === "clientName") setUsername(data.content);
+                            if (data.type === "chat" || data.type === "info") setMessages((prev) => [...prev, data]);
+                        };
+                        ws.onerror = (error: Event) => {
+                            // console.log("WebSocket error:", error);
+                            setSocket(null);
+                            setWsError(true);
+                            setUsername("");
+                            toast.error("WebSocket error occurred." + error);
+                        };
+                        ws.onclose = (event: CloseEvent) => {
+                            // console.log("WebSocket closed:", event);
+                            setWsError(true);
+                            setUsername("");
+                            setSocket(null);
+                            toast.error("WebSocket connection closed unexpectedly.");
+                        };
+                        setSocket(ws);
+                    }
                 }
+            } catch (error) {
+                let errorMessage = "Sorry, there is an unexpected error. You can try to refresh the page, or create a new room by going to the homepage.";
+                toast.error(errorMessage);
+
+                if (error instanceof Error) {
+                    errorMessage = error.message;
+                }
+                
+                console.log(errorMessage);
             }
-            console.log("Room check response:", roomCheckOK);
         })();
     }, [room_id]);
 
@@ -70,6 +88,12 @@ export default function ChatRoom() {
         };
     }, [roomCheckOK]);
 
+    useEffect(() => {
+        return () => {
+            if (socket) socket.close();
+        };
+    }, [socket]);
+
     const sendMessage = () => {
         if (socket && inputMessage.trim() && socket.readyState === WebSocket.OPEN) {
             // console.log("Sending message:", inputMessage);
@@ -78,10 +102,16 @@ export default function ChatRoom() {
         }
     };
 
+    // Auto-scroll to bottom when messages change
+    useEffect(() => {
+        if (chatboxRef.current) {
+            chatboxRef.current.scrollTop = chatboxRef.current.scrollHeight;
+        }
+    }, [messages]);
+
     return (
         <div className="flex flex-col min-h-screen">
             <Header />
-            <div><Toaster /></div>
             <main className="flex-1 flex flex-col items-center justify-center">
                 {roomCheckOK && (
                     <>
@@ -94,7 +124,10 @@ export default function ChatRoom() {
                             Copy Chatroom Link
                         </button>
 
-                        <div className="chatbox mt-6 w-2/3 p-4 bg-white rounded-lg shadow-md h-96 overflow-y-auto border border-gray-300 relative">
+                        <div
+                            ref={chatboxRef}
+                            className="chatbox mt-6 w-2/3 p-4 bg-white rounded-lg shadow-md h-96 overflow-y-auto border border-gray-300 relative"
+                        >
                             {wsError && (
                                 <div className="absolute inset-0 bg-white bg-opacity-10 flex flex-col items-center justify-center z-10">
                                     <img src="/error.svg" alt="Error" className="w-24 h-24 mb-4" />
@@ -134,8 +167,8 @@ export default function ChatRoom() {
                                 disabled={wsError}
                             />
                             <button onClick={sendMessage}
-                                hidden={wsError}
-                                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                                disabled={inputMessage.trim() === "" || socket?.readyState !== WebSocket.OPEN}
+                                className={`px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 ${inputMessage.trim() === '' || socket?.readyState !== WebSocket.OPEN ? 'opacity-50 cursor-not-allowed' : ''}`}
                             >
                                 Send
                             </button>
@@ -143,7 +176,7 @@ export default function ChatRoom() {
                     </>
                 )}
                 {!roomCheckOK && (
-                        <img src="/panic.jpg" alt="Error" className="rounded-full h-[50vh] border-[6px] border-white bg-white" />
+                    <img src="/panic.jpg" alt="Error" className="rounded-full h-[50vh] border-[6px] border-white bg-white" />
                 )}
             </main>
             <Footer />

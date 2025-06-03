@@ -1,17 +1,14 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
-import { Toaster } from "react-hot-toast";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
-const API_BASE_URL = process.env.ANONCHAT_BACKEND_API_BASE_URL || "http://localhost:8080";
+const API_BASE_URL = process.env.NEXT_PUBLIC_ANONCHAT_BACKEND_API_BASE_URL || "http://localhost:8080";
 
 export default function Home() {
   const router = useRouter();
-  const [error, setError] = useState<string>("");
 
   const createChatRoom = async () => {
     try {
@@ -21,11 +18,17 @@ export default function Home() {
       if (response.status === 201) {
         router.push(`/chatroom?room_id=${data.room_id}`);
       } else {
-        //setError("Failed to create chat room. Try again!");
-        toast.error("Failed to create chat room. Try again!")
+        // throw error if the response is not 201
+        throw new Error("Server response not 201.");
       }
-    } catch {
-      setError("An error occurred.");
+    } catch (error){
+      let errorMessage = "Failed to create chat room. Please try again later.";
+      toast.error(errorMessage);
+      
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      console.log(errorMessage);
     }
   };
 
@@ -33,13 +36,6 @@ export default function Home() {
     <div className="flex flex-col min-h-screen">
       <Header />
       <main className="flex-1 flex flex-col items-center justify-center">
-        <div><Toaster/></div>
-        {/* Show error if present */}
-        {error && (
-          <div className="mb-4 px-4 py-2 bg-red-600 text-white rounded">
-            {error}
-          </div>
-        )}
         <section className="text-gray-400 bg-gray-900 body-font rounded-md">
           <div className="container px-5 py-24 mx-auto flex flex-wrap">
             <h2 className="sm:text-3xl text-2xl text-white font-medium title-font mb-2 md:w-2/5">
