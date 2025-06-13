@@ -30,7 +30,7 @@ export default function ChatRoom() {
     useEffect(() => {
         (async () => {
             try {
-                const response = await fetch(`${API_BASE_URL}/api/rooms/${room_id}/check`, { method: "GET" });
+                const response = await fetch(`/api/rooms/${room_id}/check`, { method: "GET" });
 
                 if (response.status === 404) {
                     throw new Error("Chat room not found. Please create a new room.");

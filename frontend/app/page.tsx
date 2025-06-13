@@ -5,14 +5,12 @@ import { toast } from "react-hot-toast";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_ANONCHAT_BACKEND_API_BASE_URL || "http://localhost:8080";
-
 export default function Home() {
   const router = useRouter();
 
   const createChatRoom = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/rooms`, { method: "POST" });
+      const response = await fetch(`/api/rooms`, { method: "POST" });
       const data = await response.json();
 
       if (response.status === 201) {
