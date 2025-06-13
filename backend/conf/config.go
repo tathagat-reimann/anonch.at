@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"time"
 )
 
 var (
@@ -11,6 +12,8 @@ var (
 	MaxRoomCapacity       int
 	RandomNames           = []string{"Alice", "Bob", "Charlie", "Diana", "Eve", "Frank"}
 	AllowedFrontendOrigin = "http://localhost:3000"
+	Requests              int
+	Duration              time.Duration
 )
 
 func init() {
@@ -46,4 +49,24 @@ func LoadConfig() {
 	if len(RandomNames) < MaxRoomCapacity {
 		log.Fatalf("RandomNames length (%d) must be greater than or equal to MaxRoomCapacity (%d)", len(RandomNames), MaxRoomCapacity)
 	}
+
+	Requests = 10 // Default value
+	// Load Requests from environment variable
+	requests := os.Getenv("ANONCHAT_REQUESTS")
+	if requests != "" {
+		value, err := strconv.Atoi(requests)
+		if err == nil {
+			Requests = value
+		}
+	}
+	log.Printf("Requests: %d", Requests)
+	Duration = 10 * time.Second // Default value
+	duration := os.Getenv("ANONCHAT_DURATION")
+	if duration != "" {
+		value, err := strconv.Atoi(duration)
+		if err == nil {
+			Duration = time.Duration(value) * time.Second
+		}
+	}
+	log.Printf("Duration: %s", Duration)
 }

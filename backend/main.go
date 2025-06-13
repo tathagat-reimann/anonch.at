@@ -6,6 +6,8 @@ import (
 
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/httprate"
+	"github.com/tathagat/anonch.at/conf"
 	"github.com/tathagat/anonch.at/router"
 )
 
@@ -15,6 +17,11 @@ func main() {
 	// use middlewares
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
+	r.Use(httprate.Limit(
+		conf.Requests, // requests
+		conf.Duration, // per duration
+		httprate.WithKeyFuncs(httprate.KeyByIP, httprate.KeyByEndpoint),
+	))
 
 	router.SetupRouter(r)
 
