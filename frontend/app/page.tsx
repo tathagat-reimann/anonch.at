@@ -4,13 +4,28 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import Script from "next/script";
 
 export default function Home() {
   const router = useRouter();
 
+  // Debug: Check if environment variable is loaded
+  console.log('Turnstile Site Key:', process.env.NEXT_PUBLIC_ANONCHAT_TURNSTILE_SITE_KEY);
+
   const createChatRoom = async () => {
     try {
-      const response = await fetch(`/api/rooms`, { method: "POST" });
+      // Get the Turnstile response token
+      const turnstileResponse = (document.querySelector('input[name="cf-turnstile-response"]') as HTMLInputElement)?.value;
+      
+      const response = await fetch(`/api/rooms`, { 
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          'cf-turnstile-response': turnstileResponse
+        })
+      });
       const data = await response.json();
 
       if (response.status === 201) {
@@ -33,6 +48,10 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
+      <Script
+        src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+        strategy="afterInteractive"
+      />
       <main className="flex-1 flex flex-col items-center justify-center">
         <section className="text-gray-400 bg-gray-900 body-font rounded-md">
           <div className="container px-5 py-24 mx-auto flex flex-wrap">
@@ -43,7 +62,8 @@ export default function Home() {
               <p className="leading-relaxed text-base">
                 Click the button to create a new chat room. Once the room is created, the link to the room can be shared with someone to chat anonymously with them.
               </p>
-              <div className="flex md:mt-4 mt-6">
+              <div className="flex flex-col items-center md:items-start md:mt-4 mt-6">
+                <div className="cf-turnstile" data-sitekey={process.env.NEXT_PUBLIC_ANONCHAT_TURNSTILE_SITE_KEY || "1x00000000000000000000AA"}></div>
                 <button
                   onClick={createChatRoom}
                   className="inline-flex text-white bg-orange-500 border-0 py-1 px-4 focus:outline-none hover:bg-orange-600 rounded"
