@@ -16,7 +16,7 @@ const Footer = () => {
         </div>
         <div className="flex-grow flex flex-wrap md:pl-20 -mb-10 md:mt-0 mt-10 md:text-left text-center">
           <div className="lg:w-1/4 md:w-1/2 w-full px-4">
-            <a className="text-gray-400 hover:text-white">Legal</a>
+            <a className="text-gray-400 hover:text-white" href="/legal">Legal</a>
           </div>
           <div className="lg:w-1/4 md:w-1/2 w-full px-4">
             <a className="text-gray-400 hover:text-white">FAQs</a>

@@ -9,9 +9,6 @@ import Script from "next/script";
 export default function Home() {
   const router = useRouter();
 
-  // Debug: Check if environment variable is loaded
-  console.log('Turnstile Site Key:', process.env.NEXT_PUBLIC_ANONCHAT_TURNSTILE_SITE_KEY);
-
   const createChatRoom = async () => {
     try {
       // Get the Turnstile response token
