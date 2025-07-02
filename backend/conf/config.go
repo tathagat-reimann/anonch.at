@@ -9,11 +9,12 @@ import (
 
 var (
 	//AllowedHost     string
-	MaxRoomCapacity       int
-	RandomNames           = []string{"Alice", "Bob", "Charlie", "Diana", "Eve", "Frank"}
-	AllowedFrontendOrigin = "http://localhost:3000"
-	Requests              int
-	Duration              time.Duration
+	MaxRoomCapacity              int
+	RandomNames                  = []string{"Alice", "Bob", "Charlie", "Diana", "Eve", "Frank"}
+	AllowedFrontendOrigin        = "http://localhost:3000"
+	Requests                     int
+	Duration                     time.Duration
+	CloudFlareTurnstileSecretKey = "1x0000000000000000000000000000000AA"
 )
 
 func init() {
@@ -69,4 +70,10 @@ func LoadConfig() {
 		}
 	}
 	log.Printf("Duration: %s", Duration)
+
+	cloudFlareTurnstileSiteKey := os.Getenv("ANONCHAT_CLOUDFLARE_TURNSTILE_SECRET_KEY")
+	if cloudFlareTurnstileSiteKey != "" {
+		CloudFlareTurnstileSecretKey = cloudFlareTurnstileSiteKey
+	}
+	log.Printf("CloudFlareTurnstileSecretKey: %s", CloudFlareTurnstileSecretKey)
 }
