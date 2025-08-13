@@ -2,8 +2,6 @@
 
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import Script from "next/script";
 
 export default function Home() {
@@ -43,15 +41,14 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <Header />
+    <>
       <Script
         src="https://challenges.cloudflare.com/turnstile/v0/api.js"
         strategy="afterInteractive"
       />
-      <main className="flex-1 flex flex-col items-center justify-center">
+      <div className="flex-1 h-full flex flex-col items-center justify-center p-4">
         <section className="text-gray-400 bg-gray-900 body-font rounded-md">
-          <div className="container px-5 py-24 mx-auto flex flex-wrap">
+          <div className="container px-5 py-12 sm:py-24 mx-auto flex flex-wrap">
             <h2 className="sm:text-3xl text-2xl text-white font-medium title-font mb-2 md:w-2/5">
               Do you want to chat with someone anonymously? Chat that is not logged?
             </h2>
@@ -71,8 +68,7 @@ export default function Home() {
             </div>
           </div>
         </section>
-      </main>
-      <Footer />
-    </div>
+      </div>
+    </>
   );
 }

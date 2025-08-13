@@ -3,9 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from 'next/navigation'
 import { toast } from "react-hot-toast";
-import { Toaster } from "react-hot-toast";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_ANONCHAT_BACKEND_API_BASE_URL || "http://localhost:8080";
 
@@ -110,76 +107,72 @@ export default function ChatRoom() {
     }, [messages]);
 
     return (
-        <div className="flex flex-col min-h-screen">
-            <Header />
-            <main className="flex-1 flex flex-col items-center justify-center">
-                {roomCheckOK && (
-                    <>
-                        <h2 className="text-2xl font-semibold text-white-800">You are {username}</h2>
-                        <button
-                            hidden={wsError}
-                            onClick={() => { navigator.clipboard.writeText(window.location.href); toast.success("Chatroom link copied to clipboard!") }}
-                            className="mt-2 px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
-                        >
-                            Copy Chatroom Link
-                        </button>
+        <div className="flex-1 h-full flex flex-col items-center justify-center p-4">
+            {roomCheckOK && (
+                <>
+                    <h2 className="text-2xl font-semibold text-white mb-4">You are {username}</h2>
+                    <button
+                        hidden={wsError}
+                        onClick={() => { navigator.clipboard.writeText(window.location.href); toast.success("Chatroom link copied to clipboard!") }}
+                        className="mb-6 px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
+                    >
+                        Copy Chatroom Link
+                    </button>
 
-                        <div
-                            ref={chatboxRef}
-                            className="chatbox mt-6 w-2/3 p-4 bg-white rounded-lg shadow-md h-96 overflow-y-auto border border-gray-300 relative"
-                        >
-                            {wsError && (
-                                <div className="absolute inset-0 bg-white bg-opacity-10 flex flex-col items-center justify-center z-10">
-                                    <img src="/error.svg" alt="Error" className="w-24 h-24 mb-4" />
-                                    <p className="text-red-600 font-bold">
-                                        That Suxx! You can try to refresh the page, or create a new room by going to <a href="/" className="text-blue-600">Home</a>.
-                                    </p>
-                                </div>
-                            )}
-                            {!wsError && messages.map((msg, index) => (
-                                <p
-                                    key={index}
-                                    className={
-                                        msg.type === "chat"
-                                            ? "text-gray-700"
-                                            : msg.content.indexOf("joined") != -1
-                                                ? "text-blue-500"
-                                                : "text-red-600"
-                                    }
-                                >
-                                    {msg.sender}: {msg.content}
+                    <div
+                        ref={chatboxRef}
+                        className="chatbox w-full max-w-4xl p-4 bg-white rounded-lg shadow-md h-96 overflow-y-auto border border-gray-300 relative"
+                    >
+                        {wsError && (
+                            <div className="absolute inset-0 bg-white bg-opacity-10 flex flex-col items-center justify-center z-10">
+                                <img src="/error.svg" alt="Error" className="w-24 h-24 mb-4" />
+                                <p className="text-red-600 font-bold">
+                                    That Suxx! You can try to refresh the page, or create a new room by going to <a href="/" className="text-blue-600">Home</a>.
                                 </p>
-                            ))}
-                        </div>
-
-                        <div className="flex mt-4 w-2/3">
-                            <input
-                                type="text"
-                                value={inputMessage}
-                                onChange={(e) => setInputMessage(e.target.value)}
-                                onKeyDown={(e) => {
-                                    if (e.key === "Enter") {
-                                        sendMessage();
-                                    }
-                                }}
-                                placeholder="Type a message"
-                                className="flex-1 p-2 border rounded-md mr-2 text-gray-700"
-                                disabled={wsError}
-                            />
-                            <button onClick={sendMessage}
-                                disabled={inputMessage.trim() === "" || socket?.readyState !== WebSocket.OPEN}
-                                className={`px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 ${inputMessage.trim() === '' || socket?.readyState !== WebSocket.OPEN ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            </div>
+                        )}
+                        {!wsError && messages.map((msg, index) => (
+                            <p
+                                key={index}
+                                className={
+                                    msg.type === "chat"
+                                        ? "text-gray-700"
+                                        : msg.content.indexOf("joined") != -1
+                                            ? "text-blue-500"
+                                            : "text-red-600"
+                                }
                             >
-                                Send
-                            </button>
-                        </div>
-                    </>
-                )}
-                {!roomCheckOK && (
-                    <img src="/panic.jpg" alt="Error" className="rounded-full h-[50vh] border-[6px] border-white bg-white" />
-                )}
-            </main>
-            <Footer />
+                                {msg.sender}: {msg.content}
+                            </p>
+                        ))}
+                    </div>
+
+                    <div className="flex mt-4 w-full max-w-4xl">
+                        <input
+                            type="text"
+                            value={inputMessage}
+                            onChange={(e) => setInputMessage(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                    sendMessage();
+                                }
+                            }}
+                            placeholder="Type a message"
+                            className="flex-1 p-2 border rounded-md mr-2 text-gray-700"
+                            disabled={wsError}
+                        />
+                        <button onClick={sendMessage}
+                            disabled={inputMessage.trim() === "" || socket?.readyState !== WebSocket.OPEN}
+                            className={`px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 ${inputMessage.trim() === '' || socket?.readyState !== WebSocket.OPEN ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        >
+                            Send
+                        </button>
+                    </div>
+                </>
+            )}
+            {!roomCheckOK && (
+                <img src="/panic.jpg" alt="Error" className="rounded-full h-[50vh] border-[6px] border-white bg-white" />
+            )}
         </div>
     );
 }

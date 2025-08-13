@@ -1,21 +1,14 @@
 "use client";
 
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-
-export default function ChatRoom() {
-    
-
+export default function LegalPage() {
     return (
-        <div className="flex flex-col min-h-screen">
-            <Header />
-            <main className="flex-1 flex flex-col items-center justify-center">
-                <section className="text-gray-400 bg-gray-900 body-font rounded-md">
-                    <div className="container px-5 py-24 mx-auto flex flex-wrap">
-                        <h2 className="sm:text-3xl text-2xl text-white font-medium title-font mb-2 md:w-2/5">
-                            Legal Information
-                        </h2>
-                        <div className="md:w-3/5 md:pl-6 h-80 overflow-y-auto pr-4">
+        <div className="flex-1 h-full flex flex-col items-center justify-center p-4">
+            <section className="text-gray-400 bg-gray-900 body-font rounded-md">
+                <div className="container px-5 py-12 sm:py-24 mx-auto flex flex-wrap">
+                    <h2 className="sm:text-3xl text-2xl text-white font-medium title-font mb-2 md:w-2/5">
+                        Legal Information
+                    </h2>
+                    <div className="md:w-3/5 md:pl-6 h-80 overflow-y-auto pr-4">
                             <p className="leading-relaxed text-base mb-6">
                                 This is the legal information page. Please refer to our terms of service and privacy policy for more details.
                             </p>
@@ -97,8 +90,6 @@ export default function ChatRoom() {
                         </div>
                     </div>
                 </section>
-            </main>
-            <Footer />
-        </div>
+            </div>
     );
 }
