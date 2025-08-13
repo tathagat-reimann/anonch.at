@@ -1,6 +1,7 @@
 package router
 
 import (
+	"bytes"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -10,6 +11,7 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/tathagat/anonch.at/conf"
+	"github.com/tathagat/anonch.at/room"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/stretchr/testify/assert"
@@ -27,7 +29,14 @@ func TestSetupRouter(t *testing.T) {
 	SetupRouter(r)
 
 	t.Run("TestCreateRoom", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodPost, "/api/rooms", nil)
+		// Create JSON body with cf-turnstile-response
+		// any dummer value will work as we use test api key for Turnstile
+		body := map[string]string{
+			"cf-turnstile-response": "asdf",
+		}
+		jsonBody, _ := json.Marshal(body)
+		req := httptest.NewRequest(http.MethodPost, "/api/rooms", bytes.NewReader(jsonBody))
+		req.Header.Set("Content-Type", "application/json")
 		rec := httptest.NewRecorder()
 
 		r.ServeHTTP(rec, req)
@@ -97,11 +106,12 @@ func TestSetupRouter(t *testing.T) {
 }
 
 func createRoomAndGetId(r *chi.Mux) string {
-	createReq := httptest.NewRequest(http.MethodPost, "/api/rooms", nil)
-	createRec := httptest.NewRecorder()
-	r.ServeHTTP(createRec, createReq)
-	var response map[string]string
-	json.Unmarshal(createRec.Body.Bytes(), &response)
-	roomID := response["room_id"]
+	// createReq := httptest.NewRequest(http.MethodPost, "/api/rooms", nil)
+	// createRec := httptest.NewRecorder()
+	// r.ServeHTTP(createRec, createReq)
+	// var response map[string]string
+	// json.Unmarshal(createRec.Body.Bytes(), &response)
+	// roomID := response["room_id"]
+	roomID := room.CreateRoom() // Ensure the room is created
 	return roomID
 }

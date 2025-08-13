@@ -60,7 +60,7 @@ func LoadConfig() {
 			Requests = value
 		}
 	}
-	log.Printf("Requests: %d", Requests)
+	log.Printf("Http Limit - Requests: %d", Requests)
 	Duration = 10 * time.Second // Default value
 	duration := os.Getenv("ANONCHAT_DURATION")
 	if duration != "" {
@@ -69,7 +69,7 @@ func LoadConfig() {
 			Duration = time.Duration(value) * time.Second
 		}
 	}
-	log.Printf("Duration: %s", Duration)
+	log.Printf("Http Limit - Duration: %s", Duration)
 
 	cloudFlareTurnstileSiteKey := os.Getenv("ANONCHAT_CLOUDFLARE_TURNSTILE_SECRET_KEY")
 	if cloudFlareTurnstileSiteKey != "" {
