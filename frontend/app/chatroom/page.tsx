@@ -86,7 +86,7 @@ export default function ChatRoom() {
     }, [messages]);
 
     return (
-        <div className="flex-1 h-full flex flex-col items-center justify-center p-4">
+        <div className="flex-1 flex flex-col items-center justify-center min-h-0 p-4">
             {!connectionError && (
                 <>
                     <h2 className="text-2xl font-semibold text-white mb-4">You are {username}</h2>

@@ -2,7 +2,7 @@
 
 export default function LegalPage() {
     return (
-        <div className="flex-1 h-full flex flex-col items-center justify-center p-4">
+        <div className="flex-1 flex flex-col items-center justify-center min-h-0 p-4">
             <section className="text-gray-400 bg-gray-900 body-font rounded-md">
                 <div className="container px-5 py-12 sm:py-24 mx-auto flex flex-wrap">
                     <h2 className="sm:text-3xl text-2xl text-white font-medium title-font mb-2 md:w-2/5">

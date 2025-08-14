@@ -19,13 +19,13 @@ const Footer = () => {
             <a className="text-gray-400 hover:text-white" href="/legal">Legal</a>
           </div>
           <div className="lg:w-1/4 md:w-1/2 w-full px-4">
-            <a className="text-gray-400 hover:text-white">FAQs</a>
+            <a className="text-gray-400 hover:text-white" href="/faqs">FAQs</a>
           </div>
           <div className="lg:w-1/4 md:w-1/2 w-full px-4">
-            <a className="text-gray-400 hover:text-white">Privacy</a>
+            <a className="text-gray-400 hover:text-white" href="/privacy">Privacy</a>
           </div>
           <div className="lg:w-1/4 md:w-1/2 w-full px-4">
-            <a className="text-gray-400 hover:text-white">Contact</a>
+            <a className="text-gray-400 hover:text-white" href="/contact">Contact</a>
           </div>
         </div>
       </div>
