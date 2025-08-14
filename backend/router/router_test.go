@@ -44,17 +44,6 @@ func TestSetupRouter(t *testing.T) {
 		assert.Equal(t, http.StatusCreated, rec.Code, "Expected status Created for /api/rooms")
 	})
 
-	t.Run("TestCheckRoom", func(t *testing.T) {
-		// Create a room first to ensure it exists
-		roomID := createRoomAndGetId(r)
-		req := httptest.NewRequest(http.MethodGet, "/api/rooms/"+roomID+"/check", nil)
-		rec := httptest.NewRecorder()
-
-		r.ServeHTTP(rec, req)
-
-		assert.Equal(t, http.StatusOK, rec.Code, "Expected status OK for /api/rooms/{id}/check")
-	})
-
 	t.Run("TestJoinRoom", func(t *testing.T) {
 		// so that ws can be created in test
 		conf.AllowedFrontendOrigin = ""
@@ -82,8 +71,8 @@ func TestSetupRouter(t *testing.T) {
 		assert.NotNil(t, ws, "WebSocket connection should not be nil")
 	})
 
-	t.Run("TestJoinRoomFail", func(t *testing.T) {
-		// Create a room first to ensure it exists
+	t.Run("TestJoinRoomFail_NotFound", func(t *testing.T) {
+		// Use a non existent room id
 		roomID := "fakeRoomId"
 		t.Logf("Room ID: %s", roomID)
 
@@ -101,7 +90,36 @@ func TestSetupRouter(t *testing.T) {
 		// Verify the WebSocket connection
 		assert.NotNil(t, err, "Expected error when connecting to WebSocket with invalid room ID")
 		assert.Nil(t, ws, "WebSocket connection should be nil")
-		assert.Equal(t, http.StatusInternalServerError, response.StatusCode, "Expected 500")
+		assert.Equal(t, http.StatusNotFound, response.StatusCode, "Expected 404")
+	})
+
+	t.Run("TestJoinRoomFail_RoomFull", func(t *testing.T) {
+		// Create a room first to ensure it exists
+		roomID := createRoomAndGetId(r)
+		t.Logf("Room ID: %s", roomID)
+
+		originalMaxRoomCapacity := conf.MaxRoomCapacity
+		conf.MaxRoomCapacity = 0 // to force room full
+		// Restore environment variables after tests
+		defer func() {
+			conf.MaxRoomCapacity = originalMaxRoomCapacity
+		}()
+
+		// Create a test server using the router
+		server := httptest.NewServer(r)
+		defer server.Close()
+
+		// Convert the test server URL to a WebSocket URL
+		wsURL := "ws" + strings.TrimPrefix(server.URL, "http") + "/api/rooms/" + roomID + "/join"
+		t.Logf("WebSocket URL: %s", wsURL)
+
+		// Connect to the WebSocket server
+		ws, response, err := websocket.DefaultDialer.Dial(wsURL, nil)
+
+		// Verify the WebSocket connection
+		assert.NotNil(t, err, "Expected error when connecting to WebSocket with invalid room ID")
+		assert.Nil(t, ws, "WebSocket connection should be nil")
+		assert.Equal(t, http.StatusForbidden, response.StatusCode, "Expected 403")
 	})
 }
 

@@ -18,63 +18,48 @@ export default function ChatRoom() {
     const [messages, setMessages] = useState<Message[]>([]);
     const [inputMessage, setInputMessage] = useState<string>("");
     const [socket, setSocket] = useState<WebSocket | null>(null);
-    const [wsError, setWsError] = useState(false);
-    const [roomCheckOK, setRoomCheckOK] = useState(false);
+    const [connectionError, setConnectionError] = useState<string>("Not Connected"); // init error
     const chatboxRef = useRef<HTMLDivElement>(null);
 
     const room_id = searchParams.get("room_id");
 
     useEffect(() => {
-        (async () => {
-            try {
-                const response = await fetch(`/api/rooms/${room_id}/check`, { method: "GET" });
-
-                if (response.status === 404) {
-                    throw new Error("Chat room not found. Please create a new room.");
-                } else if (response.status === 403) {
-                    throw new Error("Chat room is full. Please create a new room by going to the homepage.");
-                } else if (response.status === 200) {
-                    setRoomCheckOK(true);
-                    if (room_id) {
-                        const ws = new WebSocket(`${API_BASE_URL}/api/rooms/${room_id}/join`);
-                        ws.onmessage = (event: MessageEvent) => {
-                            const data: Message = JSON.parse(event.data);
-                            // console.log("Received message:", data);
-                            if (data.type === "clientName") setUsername(data.content);
-                            if (data.type === "chat" || data.type === "info") setMessages((prev) => [...prev, data]);
-                        };
-                        ws.onerror = (error: Event) => {
-                            // console.log("WebSocket error:", error);
-                            setSocket(null);
-                            setWsError(true);
-                            setUsername("");
-                            toast.error("WebSocket error occurred." + error);
-                        };
-                        ws.onclose = (event: CloseEvent) => {
-                            // console.log("WebSocket closed:", event);
-                            setWsError(true);
-                            setUsername("");
-                            setSocket(null);
-                            toast.error("WebSocket connection closed unexpectedly.");
-                        };
-                        setSocket(ws);
-                    }
-                }
-            } catch (error) {
-                let errorMessage = "Sorry, there is an unexpected error. You can try to refresh the page, or create a new room by going to the homepage.";
-                toast.error(errorMessage);
-
-                if (error instanceof Error) {
-                    errorMessage = error.message;
-                }
-                
-                console.log(errorMessage);
-            }
-        })();
+        if (room_id) {
+            const ws = new WebSocket(`${API_BASE_URL}/api/rooms/${room_id}/join`);
+            
+            ws.onopen = () => {
+                setConnectionError("");
+            };
+            
+            ws.onmessage = (event: MessageEvent) => {
+                const data: Message = JSON.parse(event.data);
+                // console.log("Received message:", data);
+                if (data.type === "clientName") setUsername(data.content);
+                if (data.type === "chat" || data.type === "info") setMessages((prev) => [...prev, data]);
+            };
+            
+            ws.onerror = (error: Event) => {
+                console.log("WebSocket error:", error);
+                setSocket(null);
+                setUsername("");
+                setConnectionError("WebSocket error occurred");
+                toast.error("WebSocket error occurred");
+            };
+            
+            ws.onclose = (event: CloseEvent) => {
+                console.log("WebSocket closed:", event);
+                setSocket(null);
+                setUsername("");
+                setConnectionError("WebSocket closed");
+                toast.error("WebSocket closed");
+            };
+            
+            setSocket(ws);
+        }
     }, [room_id]);
 
     useEffect(() => {
-        if (!roomCheckOK) return; // Only run if roomCheckOK is true
+        if (connectionError !== "") return; // Only run if NO connection error
 
         window.onbeforeunload = function () {
             return "Are you sure you want to leave? You will lose your chat history.";
@@ -83,13 +68,7 @@ export default function ChatRoom() {
         return () => {
             window.onbeforeunload = null;
         };
-    }, [roomCheckOK]);
-
-    useEffect(() => {
-        return () => {
-            if (socket) socket.close();
-        };
-    }, [socket]);
+    }, [connectionError]);
 
     const sendMessage = () => {
         if (socket && inputMessage.trim() && socket.readyState === WebSocket.OPEN) {
@@ -108,11 +87,10 @@ export default function ChatRoom() {
 
     return (
         <div className="flex-1 h-full flex flex-col items-center justify-center p-4">
-            {roomCheckOK && (
+            {!connectionError && (
                 <>
                     <h2 className="text-2xl font-semibold text-white mb-4">You are {username}</h2>
                     <button
-                        hidden={wsError}
                         onClick={() => { navigator.clipboard.writeText(window.location.href); toast.success("Chatroom link copied to clipboard!") }}
                         className="mb-6 px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
                     >
@@ -123,15 +101,7 @@ export default function ChatRoom() {
                         ref={chatboxRef}
                         className="chatbox w-full max-w-4xl p-4 bg-white rounded-lg shadow-md h-96 overflow-y-auto border border-gray-300 relative"
                     >
-                        {wsError && (
-                            <div className="absolute inset-0 bg-white bg-opacity-10 flex flex-col items-center justify-center z-10">
-                                <img src="/error.svg" alt="Error" className="w-24 h-24 mb-4" />
-                                <p className="text-red-600 font-bold">
-                                    That Suxx! You can try to refresh the page, or create a new room by going to <a href="/" className="text-blue-600">Home</a>.
-                                </p>
-                            </div>
-                        )}
-                        {!wsError && messages.map((msg, index) => (
+                        {messages.map((msg, index) => (
                             <p
                                 key={index}
                                 className={
@@ -159,7 +129,6 @@ export default function ChatRoom() {
                             }}
                             placeholder="Type a message"
                             className="flex-1 p-2 border rounded-md mr-2 text-gray-700"
-                            disabled={wsError}
                         />
                         <button onClick={sendMessage}
                             disabled={inputMessage.trim() === "" || socket?.readyState !== WebSocket.OPEN}
@@ -170,8 +139,19 @@ export default function ChatRoom() {
                     </div>
                 </>
             )}
-            {!roomCheckOK && (
-                <img src="/panic.jpg" alt="Error" className="rounded-full h-[50vh] border-[6px] border-white bg-white" />
+            {connectionError && (
+                <div className="flex flex-col items-center justify-center">
+                    {/* <img src="/panic.jpg" alt="Error" className="rounded-full h-[50vh] border-[6px] border-white bg-white" /> */}
+                    <div className="mt-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-md max-w-md text-center">
+                        <p className="font-bold">Connection Failed</p>
+                        <p>{connectionError}</p>
+                        <p className="mt-2">
+                            <a href="/" className="text-blue-600 hover:text-blue-800 underline">
+                                Go to homepage to create a new room
+                            </a>
+                        </p>
+                    </div>
+                </div>
             )}
         </div>
     );

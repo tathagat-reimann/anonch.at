@@ -28,7 +28,6 @@ var (
 func SetupRouter(r *chi.Mux) {
 	r.Route("/api", func(r chi.Router) {
 		r.Post("/rooms", CreateRoom)
-		r.Get("/rooms/{id}/check", CheckRoom)
 		r.Get("/rooms/{id}/join", JoinRoom)
 	})
 }
@@ -66,11 +65,11 @@ func CreateRoom(w http.ResponseWriter, r *http.Request) {
 	render.JSON(w, r, response)
 }
 
-func CheckRoom(w http.ResponseWriter, r *http.Request) {
+func JoinRoom(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
 
 	roomID := chi.URLParam(r, "id")
-	exists, full, room := room.CheckRoom(roomID)
+	exists, full, _ := room.CheckRoom(roomID)
 
 	if !exists {
 		http.Error(w, "Room not found", http.StatusNotFound)
@@ -79,22 +78,6 @@ func CheckRoom(w http.ResponseWriter, r *http.Request) {
 
 	if full {
 		http.Error(w, "Room is full", http.StatusForbidden)
-		return
-	}
-
-	response := map[string]string{"room_id": room.ID}
-	render.JSON(w, r, response)
-}
-
-func JoinRoom(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
-
-	roomID := chi.URLParam(r, "id")
-	exists, full, _ := room.CheckRoom(roomID)
-
-	if !exists || full {
-		// return error
-		http.Error(w, "Failed to join room", http.StatusInternalServerError)
 		return
 	}
 
