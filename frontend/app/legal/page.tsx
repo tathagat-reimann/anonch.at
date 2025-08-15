@@ -10,6 +10,9 @@ export default function LegalPage() {
                     </h2>
                     <div className="md:w-3/5 md:pl-6 h-80 overflow-y-auto pr-4">
                             <p className="leading-relaxed text-base mb-6">
+                                Owned and run by AlgoLog Pvt. Ltd. (Delhi/India)
+                            </p>
+                            <p className="leading-relaxed text-base mb-6">
                                 This is the legal information page. Please refer to our terms of service and privacy policy for more details.
                             </p>
                             
@@ -21,6 +24,7 @@ export default function LegalPage() {
                                         If you do not agree to these terms, please do not use the Service.
                                     </p>
                                     <ul className="list-disc list-inside space-y-2 text-sm">
+                                        <li>Jurisdiction for legal matters - Delhi</li>
                                         <li>You must be at least 13 years old to use this Service</li>
                                         <li>You agree not to use the Service for any unlawful purposes</li>
                                         <li>You will not share harmful, offensive, or inappropriate content</li>
@@ -82,7 +86,7 @@ export default function LegalPage() {
                                 </section>
 
                                 <section className="border-t border-gray-600 pt-4">
-                                    <p className="text-xs text-gray-400">
+                                    <p className="text-xs text-gray-400" suppressHydrationWarning>
                                         Last updated: {new Date().toLocaleDateString()}
                                     </p>
                                 </section>
