@@ -110,7 +110,7 @@ export default function FAQsPage() {
                                 <p className="leading-relaxed text-sm">
                                     If you experience technical problems, try refreshing the page first. For persistent issues, 
                                     you can contact us through our contact page. Please provide details about your browser 
-                                    and the specific issue you're experiencing.
+                                    and the specific issue you&apos;re experiencing.
                                 </p>
                             </section>
 
@@ -118,7 +118,7 @@ export default function FAQsPage() {
                                 <h3 className="text-lg font-semibold text-white mb-2">Can I suggest new features?</h3>
                                 <p className="leading-relaxed text-sm">
                                     We welcome feedback and feature suggestions! Please reach out through our contact page 
-                                    with your ideas. We're always looking to improve the service while maintaining our 
+                                    with your ideas. We&apos;re always looking to improve the service while maintaining our 
                                     core principles of anonymity and simplicity.
                                 </p>
                             </section>

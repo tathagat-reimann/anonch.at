@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from 'next/navigation'
 import { toast } from "react-hot-toast";
+import Link from "next/link";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_ANONCHAT_BACKEND_API_BASE_URL || "http://localhost:8080";
 
@@ -146,9 +147,9 @@ export default function ChatRoom() {
                         <p className="font-bold">Connection Failed</p>
                         <p>{connectionError}</p>
                         <p className="mt-2">
-                            <a href="/" className="text-blue-600 hover:text-blue-800 underline">
+                            <Link href="/" className="text-blue-600 hover:text-blue-800 underline">
                                 Go to homepage to create a new room
-                            </a>
+                            </Link>
                         </p>
                     </div>
                 </div>

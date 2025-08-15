@@ -29,7 +29,7 @@ export default function LegalPage() {
                                         <li>You agree not to use the Service for any unlawful purposes</li>
                                         <li>You will not share harmful, offensive, or inappropriate content</li>
                                         <li>We reserve the right to terminate access at any time</li>
-                                        <li>The Service is provided "as is" without warranties</li>
+                                        <li>The Service is provided &quot;as is&quot; without warranties</li>
                                     </ul>
                                 </section>
 

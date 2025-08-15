@@ -30,7 +30,7 @@ export default function PrivacyPage() {
                             </section>
 
                             <section>
-                                <h3 className="text-xl font-semibold text-white mb-3">Information We Don't Collect</h3>
+                                <h3 className="text-xl font-semibold text-white mb-3">Information We Don&apos;t Collect</h3>
                                 <p className="leading-relaxed text-sm mb-4">
                                     Unlike most online services, we specifically avoid collecting any personal information:
                                 </p>
@@ -129,7 +129,7 @@ export default function PrivacyPage() {
                                     While we protect your privacy, you also play a role:
                                 </p>
                                 <ul className="list-disc list-inside space-y-2 text-sm">
-                                    <li>Don't share personal information in chats</li>
+                                    <li>Don&apos;t share personal information in chats</li>
                                     <li>Use unique room names for private conversations</li>
                                     <li>Be cautious about sharing room links publicly</li>
                                     <li>Consider using a VPN for additional privacy</li>
@@ -167,7 +167,7 @@ export default function PrivacyPage() {
                                 <h3 className="text-xl font-semibold text-white mb-3">Contact Us</h3>
                                 <p className="leading-relaxed text-sm mb-4">
                                     If you have questions about our privacy practices or this policy, please contact us 
-                                    through our contact page. We're committed to transparency and will address any privacy concerns.
+                                    through our contact page. We&apos;re committed to transparency and will address any privacy concerns.
                                 </p>
                                 <p className="text-xs text-gray-400" suppressHydrationWarning>
                                     Last updated: {new Date().toLocaleDateString()}

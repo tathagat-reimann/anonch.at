@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 
 export default function ContactPage() {
     const [emailRevealed, setEmailRevealed] = useState(false);
@@ -34,7 +35,7 @@ export default function ContactPage() {
                     </h2>
                     <div className="md:w-3/5 md:pl-6 h-80 overflow-y-auto pr-4">
                         <p className="leading-relaxed text-base mb-6">
-                            Have questions, feedback, or need support? We're here to help while respecting your privacy.
+                            Have questions, feedback, or need support? We&apos;re here to help while respecting your privacy.
                         </p>
                         
                         <div className="space-y-6 text-gray-300">
@@ -117,9 +118,9 @@ export default function ContactPage() {
                                 </p>
                                 <ul className="list-disc list-inside space-y-2 text-sm">
                                     <li>We only use your email to respond to your inquiry</li>
-                                    <li>We don't add you to mailing lists without explicit consent</li>
+                                    <li>We don&apos;t add you to mailing lists without explicit consent</li>
                                     <li>Support emails are deleted after the issue is resolved</li>
-                                    <li>We don't share your contact information with third parties</li>
+                                    <li>We don&apos;t share your contact information with third parties</li>
                                     <li>You can request deletion of your support correspondence at any time</li>
                                 </ul>
                             </section>
@@ -130,9 +131,9 @@ export default function ContactPage() {
                                     Before reaching out, you might find answers in our other resources:
                                 </p>
                                 <ul className="list-disc list-inside space-y-2 text-sm">
-                                    <li><a href="/faqs" className="text-blue-400 hover:text-blue-300 underline">Frequently Asked Questions</a> - Common usage and technical questions</li>
-                                    <li><a href="/privacy" className="text-blue-400 hover:text-blue-300 underline">Privacy Policy</a> - Detailed information about data handling</li>
-                                    <li><a href="/legal" className="text-blue-400 hover:text-blue-300 underline">Legal Information</a> - Terms of service and legal details</li>
+                                    <li><Link href="/faqs" className="text-blue-400 hover:text-blue-300 underline">Frequently Asked Questions</Link> - Common usage and technical questions</li>
+                                    <li><Link href="/privacy" className="text-blue-400 hover:text-blue-300 underline">Privacy Policy</Link> - Detailed information about data handling</li>
+                                    <li><Link href="/legal" className="text-blue-400 hover:text-blue-300 underline">Legal Information</Link> - Terms of service and legal details</li>
                                 </ul>
                             </section>
 
@@ -142,7 +143,7 @@ export default function ContactPage() {
                                     For urgent security issues or abuse reports:
                                 </p>
                                 <ul className="list-disc list-inside space-y-2 text-sm">
-                                    <li>Use the same email address with "URGENT" in the subject line</li>
+                                    <li>Use the same email address with &quot;URGENT&quot; in the subject line</li>
                                     <li>Include as much detail as possible about the security concern</li>
                                     <li>We prioritize security-related communications</li>
                                     <li>For immediate safety concerns, also contact local authorities</li>
@@ -156,7 +157,7 @@ export default function ContactPage() {
                                 </p>
                                 <ul className="list-disc list-inside space-y-2 text-sm">
                                     <li><strong>English:</strong> Primary support language</li>
-                                    <li><strong>Other Languages:</strong> We'll do our best to assist using translation tools</li>
+                                    <li><strong>Other Languages:</strong> We&apos;ll do our best to assist using translation tools</li>
                                 </ul>
                                 <p className="leading-relaxed text-sm mt-4 text-gray-400">
                                     Feel free to write in your preferred language, and we'll work to understand and respond appropriately.
