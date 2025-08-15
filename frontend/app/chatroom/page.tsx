@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, Suspense } from "react";
 import { useSearchParams } from 'next/navigation'
 import { toast } from "react-hot-toast";
 import Link from "next/link";
@@ -13,7 +13,7 @@ interface Message {
     type: string;
 }
 
-export default function ChatRoom() {
+function ChatRoomContent() {
     const searchParams = useSearchParams()
     const [username, setUsername] = useState<string>("Guest");
     const [messages, setMessages] = useState<Message[]>([]);
@@ -155,5 +155,23 @@ export default function ChatRoom() {
                 </div>
             )}
         </div>
+    );
+}
+
+function ChatRoomLoading() {
+    return (
+        <div className="flex-1 flex flex-col items-center justify-center min-h-0 p-4">
+            <div className="text-center">
+                <p className="text-gray-400">Loading chat room...</p>
+            </div>
+        </div>
+    );
+}
+
+export default function ChatRoom() {
+    return (
+        <Suspense fallback={<ChatRoomLoading />}>
+            <ChatRoomContent />
+        </Suspense>
     );
 }
