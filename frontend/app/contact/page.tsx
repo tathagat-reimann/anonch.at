@@ -160,7 +160,7 @@ export default function ContactPage() {
                                     <li><strong>Other Languages:</strong> We&apos;ll do our best to assist using translation tools</li>
                                 </ul>
                                 <p className="leading-relaxed text-sm mt-4 text-gray-400">
-                                    Feel free to write in your preferred language, and we'll work to understand and respond appropriately.
+                                    Feel free to write in your preferred language, and we&apos;ll work to understand and respond appropriately.
                                 </p>
                             </section>
 

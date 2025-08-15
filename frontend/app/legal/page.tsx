@@ -20,7 +20,7 @@ export default function LegalPage() {
                                 <section>
                                     <h3 className="text-xl font-semibold text-white mb-3">Terms of Service</h3>
                                     <p className="leading-relaxed text-sm mb-4">
-                                        By using this anonymous chat service ("Service"), you agree to be bound by these Terms of Service. 
+                                        By using this anonymous chat service (&quot;Service&quot;), you agree to be bound by these Terms of Service. 
                                         If you do not agree to these terms, please do not use the Service.
                                     </p>
                                     <ul className="list-disc list-inside space-y-2 text-sm">
@@ -51,7 +51,7 @@ export default function LegalPage() {
                                 <section>
                                     <h3 className="text-xl font-semibold text-white mb-3">Disclaimer</h3>
                                     <p className="leading-relaxed text-sm mb-4">
-                                        THE SERVICE IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTIES OF ANY KIND, 
+                                        THE SERVICE IS PROVIDED &quot;AS IS&quot; AND &quot;AS AVAILABLE&quot; WITHOUT WARRANTIES OF ANY KIND, 
                                         EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, 
                                         FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, OR SECURITY.
                                     </p>

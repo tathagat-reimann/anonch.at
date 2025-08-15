@@ -26,7 +26,7 @@ export default function FAQsPage() {
                             <section className="border-b border-gray-600 pb-4">
                                 <h3 className="text-lg font-semibold text-white mb-2">How do I start a chat?</h3>
                                 <p className="leading-relaxed text-sm">
-                                    Simply visit our homepage and click "Start Anonymous Chat" or create a custom room 
+                                    Simply visit our homepage and click &quot;Start Anonymous Chat&quot; or create a custom room 
                                     by entering a room name. You can share the room link with others to join the same conversation.
                                 </p>
                             </section>
